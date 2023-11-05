@@ -1,0 +1,55 @@
+4. Use Autoencoder to implement anomaly detection. Build the model by using:
+
+a. Import required libraries
+
+b. Upload / access the dataset
+
+c. Encoder converts it into latent representation
+
+d. Decoder networks convert it back to the original input
+
+e. Compile the models with Optimizer, Loss, and Evaluation Metrics
+
+import numpy as np
+import tensorflow as tf
+from tensorflow.keras.layers import Input, Dense
+from tensorflow.keras.models import Model
+
+
+# Load your dataset here
+# For demonstration purposes, let's use a random example dataset
+from sklearn.datasets import make_blobs
+
+X, _ = make_blobs(n_samples=1000, n_features=10, centers=1, random_state=42)
+
+c. Create the encoder and decoder networks:
+
+# Define the input layer
+input_layer = Input(shape=(X.shape[1],))
+
+# Define the encoder
+encoded = Dense(64, activation='relu')(input_layer)
+encoded = Dense(32, activation='relu')(encoded)
+encoded = Dense(16, activation='relu')(encoded)
+
+# Define the decoder
+decoded = Dense(32, activation='relu')(encoded)
+decoded = Dense(64, activation='relu')(decoded)
+decoded = Dense(X.shape[1], activation='sigmoid')(decoded)
+
+
+d. Create the autoencoder model:
+
+autoencoder = Model(input_layer, decoded)
+
+e. Compile the models with optimizer, loss, and evaluation metrics:
+
+autoencoder.compile(optimizer='adam', loss='mean_squared_error')
+
+
+autoencoder.fit(X, X, epochs=50, batch_size=32, validation_split=0.2)
+
+reconstructions = autoencoder.predict(X)
+mse = np.mean(np.power(X - reconstructions, 2), axis=1)
+
+
